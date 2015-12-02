@@ -9,6 +9,13 @@ var ignore_file_type = ['js', 'css', 'jpg', 'png', 'gif', 'jpeg'];
 var proxy = Proxy();
 var req_data_pool = new Map();
 var res_data_pool = new Map();
+Function.prototype.curry = function() {
+  var fn = this, args = Array.prototype.slice.call(arguments);
+  return function() {
+    return fn.apply(this, args.concat(
+          Array.prototype.slice.call(arguments)));
+    };
+};
 
 proxy.onError(function(ctx, err) {
   console.log(ctx.clientToProxyRequest.headers.host);
@@ -104,23 +111,12 @@ var log_wrapper = function(ctx, callback) {
   return callback();
 };
 
-var request_handler = function(ctx, chunk, callback) {
+var chunk_handler = function(data_pool, ctx, chunk, callback) {
   url = get_url(ctx);
-  if (!req_data_pool.has(url)) {
-    req_data_pool.set(url, []);
+  if (!data_pool.has(url)) {
+    data_pool.set(url, []);
   }
-  req_data_pool.get(url).push(chunk);
-
-  return callback(null, chunk);
-};
-
-var response_handler = function(ctx, chunk, callback) {
-  url = get_url(ctx);
-  if (!res_data_pool.has(url)) {
-    res_data_pool.set(url, []);
-  }
-  res_data_pool.get(url).push(chunk);
-
+  data_pool.get(url).push(chunk);
   return callback(null, chunk);
 };
 
@@ -133,8 +129,8 @@ proxy.onRequest(function(ctx, callback) {
   // except for ignore file types
   var ft = file_type(ctx.clientToProxyRequest.url);
   if (ignore_file_type.indexOf(ft) < 0) {
-    ctx.onRequestData(request_handler);
-    ctx.onResponseData(response_handler);
+    ctx.onRequestData(chunk_handler.curry(req_data_pool));
+    ctx.onResponseData(chunk_handler.curry(res_data_pool));
     ctx.onResponseEnd(log_wrapper);
   }
   return callback();
