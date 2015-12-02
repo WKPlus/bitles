@@ -7,7 +7,8 @@ var Proxy = require('http-mitm-proxy'),
 var ignore_file_type = ['js', 'css', 'jpg', 'png', 'gif', 'jpeg'];
 
 var proxy = Proxy();
-var data_pool = new Map();
+var req_data_pool = new Map();
+var res_data_pool = new Map();
 
 proxy.onError(function(ctx, err) {
   console.log(ctx.clientToProxyRequest.headers.host);
@@ -43,24 +44,7 @@ var decode_content = function(buffer, cs) {
   }
 };
 
-var f = function(ctx, callback) {
-  console.log(Array(41).join(">"));
-  url = get_url(ctx);
-  console.log(url);
-  console.log(JSON.stringify(ctx.clientToProxyRequest.headers, null, '  '));
-
-  console.log(Array(41).join("<"));
-  console.log(JSON.stringify(ctx.serverToProxyResponse.headers, null, '  '));
-
-  // if response body is empty or response is image file, skip logging content
-  var buffers = data_pool.get(url);
-  if (!buffers) {
-    return callback();
-  }
-  if (is_image_file(ctx.serverToProxyResponse.headers)) {
-    return callback();
-  }
-
+var concate_buffers = function(buffers) {
   var size = 0;
   for(var i = 0, l = buffers.length; i < l; i++) {
     size += buffers[i].length;
@@ -71,28 +55,71 @@ var f = function(ctx, callback) {
     buffers[i].copy(buffer, pos);
     pos += buffers[i].length;
   }
+  return buffer;
+};
 
+var log_handler = function(ctx) {
+  url = get_url(ctx);
+  console.log(url);
+  console.log(JSON.stringify(ctx.clientToProxyRequest.headers, null, '  '));
+
+  var buffers = req_data_pool.get(url);
+  req_data_pool.delete(url);
+  if (buffers) {
+    console.log(concate_buffers(buffers).toString('UTF8'));
+  }
+
+  console.log(Array(81).join("-"));
+  console.log(JSON.stringify(ctx.serverToProxyResponse.headers, null, '  '));
+
+  // if response body is empty or response is image file, skip logging content
+  var buffers = res_data_pool.get(url);
+  res_data_pool.delete(url);
+  if (!buffers) {
+    return;
+  }
+  if (is_image_file(ctx.serverToProxyResponse.headers)) {
+    return;
+  }
+
+  var buffer = concate_buffers(buffers);
   var cs = charset(ctx.serverToProxyResponse.headers['content-type']);
   if (is_zipped(ctx.serverToProxyResponse.headers)) {
     zlib.unzip(buffer, function(err, buffer) {
       if (!err) {
         console.log(decode_content(buffer, cs));
       }else {
-        console.log(err);
+        console.error("unzip error:", err);
       }
     });
   }else {
     console.log(decode_content(buffer, cs));
   }
+};
+
+var log_wrapper = function(ctx, callback) {
+  console.log(Array(81).join(">"));
+  log_handler(ctx);
+  console.log(Array(81).join("<"));
   return callback();
 };
 
-var chunk_handler = function(ctx, chunk, callback) {
+var request_handler = function(ctx, chunk, callback) {
   url = get_url(ctx);
-  if (!data_pool.has(url)) {
-    data_pool.set(url, []);
+  if (!req_data_pool.has(url)) {
+    req_data_pool.set(url, []);
   }
-  data_pool.get(url).push(chunk);
+  req_data_pool.get(url).push(chunk);
+
+  return callback(null, chunk);
+};
+
+var response_handler = function(ctx, chunk, callback) {
+  url = get_url(ctx);
+  if (!res_data_pool.has(url)) {
+    res_data_pool.set(url, []);
+  }
+  res_data_pool.get(url).push(chunk);
 
   return callback(null, chunk);
 };
@@ -106,8 +133,9 @@ proxy.onRequest(function(ctx, callback) {
   // except for ignore file types
   var ft = file_type(ctx.clientToProxyRequest.url);
   if (ignore_file_type.indexOf(ft) < 0) {
-    ctx.onResponseEnd(f);
-    ctx.onResponseData(chunk_handler);
+    ctx.onRequestData(request_handler);
+    ctx.onResponseData(response_handler);
+    ctx.onResponseEnd(log_wrapper);
   }
   return callback();
 });
