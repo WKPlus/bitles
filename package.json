@@ -7,7 +7,9 @@
     "test": "test"
   },
   "dependencies": {
-    "http-mitm-proxy": "0.1.0"
+    "http-mitm-proxy": "0.1.0",
+    "charset": "1.0.0",
+    "underscore": "1.8.3"
   },
   "devDependencies": {},
   "scripts": {

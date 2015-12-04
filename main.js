@@ -1,7 +1,8 @@
 var Proxy = require('http-mitm-proxy'),
     Iconv = require('iconv').Iconv,
     zlib = require('zlib'),
-    charset = require('charset');
+    charset = require('charset'),
+    _ = require('underscore');
   
 
 var ignore_file_type = ['js', 'css', 'jpg', 'png', 'gif', 'jpeg'];
@@ -9,13 +10,16 @@ var ignore_file_type = ['js', 'css', 'jpg', 'png', 'gif', 'jpeg'];
 var proxy = Proxy();
 var req_data_pool = new Map();
 var res_data_pool = new Map();
-Function.prototype.curry = function() {
-  var fn = this, args = Array.prototype.slice.call(arguments);
-  return function() {
-    return fn.apply(this, args.concat(
-          Array.prototype.slice.call(arguments)));
-    };
-};
+
+_.mixin({
+    curry: function(func) {
+        var applied = Array.prototype.slice.call(arguments, 1);
+        return function() {
+            var args = applied.concat(Array.prototype.slice.call(arguments));
+            return func.apply(this, args);
+        };
+    }
+});
 
 proxy.onError(function(ctx, err) {
   console.log(ctx.clientToProxyRequest.headers.host);
@@ -129,8 +133,8 @@ proxy.onRequest(function(ctx, callback) {
   // except for ignore file types
   var ft = file_type(ctx.clientToProxyRequest.url);
   if (ignore_file_type.indexOf(ft) < 0) {
-    ctx.onRequestData(chunk_handler.curry(req_data_pool));
-    ctx.onResponseData(chunk_handler.curry(res_data_pool));
+    ctx.onRequestData(_.curry(chunk_handler, req_data_pool));
+    ctx.onResponseData(_.curry(chunk_handler, res_data_pool));
     ctx.onResponseEnd(log_wrapper);
   }
   return callback();
