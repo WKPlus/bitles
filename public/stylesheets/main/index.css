@@ -1,0 +1,23 @@
+html, body {
+  margin: 0;
+  background: #EDEDED;
+}
+#request_info {
+  background: white;
+  width: 47%;
+  height: 600px;
+  border: 1px solid #BEBEBE;
+  padding: 5px;
+  margin: 5px;
+  float: left;
+}
+
+#request_detail {
+  background: white;
+  width: 47%;
+  height: 600px;
+  border: 1px solid #BEBEBE;
+  padding: 5px;
+  margin: 5px;
+  float: right;
+}

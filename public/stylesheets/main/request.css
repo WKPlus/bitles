@@ -1,0 +1,16 @@
+.request_cell {
+  height: 40px;
+  border: 1px solid #DDD;
+}
+
+.request_cell .name {
+  float: left;
+  margin-left: 20px;
+  margin-top: 12px
+}
+
+.request_cell .time {
+  float: right;
+  margin-right: 20px;
+  margin-top: 12px
+}
