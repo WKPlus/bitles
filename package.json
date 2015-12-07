@@ -2,13 +2,14 @@
   "name": "bitles",
   "version": "0.0.1",
   "description": "",
-  "main": "index.html",
+  "main": "main.html",
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "http-mitm-proxy": "0.1.0",
     "charset": "1.0.0",
+    "http-mitm-proxy": "0.1.0",
+    "iconv": "^2.1.11",
     "underscore": "1.8.3"
   },
   "devDependencies": {},
@@ -16,5 +17,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "window": {
+    "title": "Bitles",
+    "toolbar": true,
+    "frame": true,
+    "width": 1180,
+    "height": 755,
+    "min_width": 350,
+    "min_height": 710,
+    "resizable": true,
+    "position": "center",
+    "single-instance": true,
+    "node-remote": "localhost"
+  }
 }

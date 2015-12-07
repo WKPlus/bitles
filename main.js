@@ -4,8 +4,10 @@ var Proxy = require('http-mitm-proxy'),
     charset = require('charset'),
     _ = require('underscore');
   
+var htmlDrawer = require("./proxy/htmlDrawer.js");
 
 var ignore_file_type = ['js', 'css', 'jpg', 'png', 'gif', 'jpeg'];
+var PORT = 5050;
 
 var proxy = Proxy();
 var req_data_pool = new Map();
@@ -72,6 +74,11 @@ var concate_buffers = function(buffers) {
 var log_handler = function(ctx) {
   url = get_url(ctx);
   console.log(url);
+  console.log("push url into requestList");
+  var requestInfo = {
+    url: url
+  }
+  htmlDrawer.appendRequestList(requestInfo);
   console.log(JSON.stringify(ctx.clientToProxyRequest.headers, null, '  '));
 
   var buffers = req_data_pool.get(url);
@@ -141,4 +148,5 @@ proxy.onRequest(function(ctx, callback) {
 });
 
 
-proxy.listen({port: 5050});
+proxy.listen({port: PORT});
+
