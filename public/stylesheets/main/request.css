@@ -1,16 +1,22 @@
 .request_cell {
-  height: 40px;
+  height: 80px;
+  overflow: auto;
   border: 1px solid #DDD;
+  position: relative;
 }
 
 .request_cell .name {
-  float: left;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   margin-left: 20px;
   margin-top: 12px
 }
 
 .request_cell .time {
-  float: right;
+  position: absolute;
   margin-right: 20px;
-  margin-top: 12px
+  margin-top: 12px;
+  right: 0;
+  top: 0;
 }

@@ -1,5 +1,5 @@
 var Proxy = require('http-mitm-proxy'),
-    Iconv = require('iconv').Iconv,
+//    Iconv = require('iconv').Iconv,
     zlib = require('zlib'),
     charset = require('charset'),
     _ = require('underscore');
