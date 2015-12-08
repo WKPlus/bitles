@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   background: #EDEDED;
 }
+
 #request_info {
   background: white;
   width: 47%;
@@ -17,7 +18,55 @@ html, body {
   width: 47%;
   height: 600px;
   border: 1px solid #BEBEBE;
-  padding: 5px;
+/*  padding: 5px;*/
   margin: 5px;
   float: right;
 }
+
+#centeredmenu {
+   float:left;
+   width:100%;
+   background:#fff;
+   border-bottom:1px solid #e9e9e9;
+   overflow:hidden;
+   position:relative;
+}
+#centeredmenu ul {
+   clear:left;
+   float:left;
+   list-style:none;
+   margin:0;
+   padding:0;
+   position:relative;
+   left:50%;
+   text-align:center;
+}
+#centeredmenu ul li {
+   display:block;
+   float:left;
+   list-style:none;
+   margin:0;
+   padding:0;
+   position:relative;
+   right:50%;
+}
+#centeredmenu ul li a {
+   display:block;
+   margin:0 0 0 1px;
+   padding:3px 10px;
+/*   background:#ddd;*/
+   color:#000;
+   text-decoration:none;
+   line-height:1.3em;
+}
+#centeredmenu ul li a:hover {
+   background:#BEBEBE;
+   color:#fff;
+}
+#centeredmenu ul li a.active,
+#centeredmenu ul li a.active:hover {
+   color:#fff;
+   background:#9a9da2;
+   font-weight:bold;
+}
+

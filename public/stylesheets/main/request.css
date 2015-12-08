@@ -1,6 +1,6 @@
 .request_cell {
   height: 80px;
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid #DDD;
   position: relative;
 }
