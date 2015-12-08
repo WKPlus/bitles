@@ -1,6 +1,6 @@
 'use strict';
 
-var main = require("./main.js");
+var main = require("./proxy/proxy.js");
 var htmlDrawer = require("./proxy/htmlDrawer.js");
 
 $('.slim-scroll').each(function () {
