@@ -74,45 +74,56 @@ var concate_buffers = function(buffers) {
 var log_handler = function(ctx) {
   url = get_url(ctx);
   console.log(url);
-  console.log("push url into requestList");
-  var requestInfo = {
-    url: url
-  }
-  htmlDrawer.appendRequestList(requestInfo);
   console.log(JSON.stringify(ctx.clientToProxyRequest.headers, null, '  '));
+  //初始化一个requestInfo对象，传给htmlDrawer
+  var requestInfo = {
+    url: url,
+    req_header: ctx.clientToProxyRequest.headers,
+    req_body: "",
+    res_header: "",
+    res_body: "",
+    err_msg: ""
+  };
 
   var buffers = req_data_pool.get(url);
   req_data_pool.delete(url);
   if (buffers) {
-    console.log(concate_buffers(buffers).toString('UTF8'));
+    var req_body = concate_buffers(buffers).toString('UTF8');
+    console.log(req_body)
+    requestInfo.req_body = req_body;
   }
 
   console.log(Array(81).join("-"));
   console.log(JSON.stringify(ctx.serverToProxyResponse.headers, null, '  '));
+  requestInfo.res_header = ctx.serverToProxyResponse.headers; 
 
   // if response body is empty or response is image file, skip logging content
   var buffers = res_data_pool.get(url);
   res_data_pool.delete(url);
-  if (!buffers) {
-    return;
-  }
   if (is_image_file(ctx.serverToProxyResponse.headers)) {
     return;
   }
 
-  var buffer = concate_buffers(buffers);
-  var cs = charset(ctx.serverToProxyResponse.headers['content-type']);
-  if (is_zipped(ctx.serverToProxyResponse.headers)) {
-    zlib.unzip(buffer, function(err, buffer) {
-      if (!err) {
-        console.log(decode_content(buffer, cs));
-      }else {
-        console.error("unzip error:", err);
-      }
-    });
-  }else {
-    console.log(decode_content(buffer, cs));
+  if (buffers) {
+    var cs = charset(ctx.serverToProxyResponse.headers['content-type']);
+    var buffer = concate_buffers(buffers);
+    if (is_zipped(ctx.serverToProxyResponse.headers)) {
+      zlib.unzip(buffer, function(err, buffer) {
+        if (!err) {
+          console.log(decode_content(buffer, cs));
+          requestInfo.res_body = decode_content(buffer, cs);
+        }else {
+          console.error("unzip error:", err);
+          requestInfo.err_msg = err;
+        }
+      });
+    }else {
+      console.log(decode_content(buffer, cs));
+      requestInfo.res_body = decode_content(buffer, cs);
+    }
   }
+  console.log("push url into requestList");
+  htmlDrawer.appendRequestList(requestInfo);
 };
 
 var log_wrapper = function(ctx, callback) {
@@ -149,4 +160,3 @@ proxy.onRequest(function(ctx, callback) {
 
 
 proxy.listen({port: PORT});
-
