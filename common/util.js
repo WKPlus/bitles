@@ -4,10 +4,6 @@ var util = {
 //    if( typeof req.session == 'undefined')
 //      return {}
     user = req.session.user || {};
-    user = { id: 8437,
-            name: '刘翔宇',
-            username: 'xiangyu.liu',
-            loginId: -38289 }
     return user;
   },
   diffList: function(list){
