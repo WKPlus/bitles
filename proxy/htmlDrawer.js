@@ -6,9 +6,13 @@ var bind = function(scope){
 }
 
 var appendRequestList = function(requestInfo){
+  console.log(requestInfo);
   var requestList = scope_requestList.requestList;
-  requestInfo.name = requestInfo.url || "";
+  var urlDetail = requestInfo.getUrlDetail();
   requestInfo.time = new Date().toTimeString();
+  requestInfo.path = urlDetail.pathname;
+  requestInfo.host = urlDetail.hostname;
+  requestInfo.req_header = JSON.stringify(requestInfo.req_header, null, 4);
   requestList.push(requestInfo);
   scope_requestList.$apply();
 }

@@ -12,9 +12,10 @@
         <h5>This is Bitles</h5>
       </div>
       <div id="request_info" ng-controller="requestController">
-        <div class="slim-scroll">
+        <div class="slim-scroll" id="slim">
           <div ng-repeat="request in requestList" class="request_cell" ng-click="openWindows(request)">
-            <div class="name">{{request.name}}</div>
+            <div class="host">host:{{request.host}}</div>
+            <div class="path">path:{{request.path}}</div>
             <div class="time">{{request.time}}</div>
           </div>
         </div>
@@ -23,11 +24,11 @@
       <div id="request_detail" ng-controller="detailController">
         <div id="centeredmenu">
            <ul>
-             <li><a href="#" class="active">request</a></li>
-             <li><a href="#">response</a></li>
+             <li><a href="#" class="active" id="req_tab">request</a></li>
+             <li><a href="#" id="res_tab">response</a></li>
            </ul>
         </div>
-        {{$root.request_detail}}
+          <div ng-include="isRequest ? './view/requestDetail.html' : './view/responseDetail.html'"></div>
       </div>
 
 <script src="public/ace/assets/js/jquery-2.0.3.min.js"></script>
