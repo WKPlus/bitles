@@ -6,7 +6,7 @@
 .response_detail textarea { 
   margin-top: 5px;
   margin-bottom: 5px;
-  width: 90%;
+  width: 99%;
 }
 
 .response_detail { 
@@ -23,7 +23,7 @@
 }
 
 .request_detail textarea {
-  width: 90%;
+  width: 99%;
   margin-top: 5px;
   margin-bottom: 5px;
 }
@@ -32,7 +32,7 @@
   height: 280px;
 }
 .request_cell {
-  height: 80px;
+  height: 40px;
   overflow: hidden;
   border: 1px solid #DDD;
   position: relative;
@@ -40,20 +40,19 @@
 
 .request_cell .host {
   position: absolute;
-  top: 12px;
+  top: 0;
   left: 20px;
 }
 
 .request_cell .path {
   position: absolute;
-  bottom: 10px;
+  bottom: 0;
   left: 20px;
 }
 
 .request_cell .time {
   position: absolute;
   margin-right: 20px;
-  margin-top: 12px;
   right: 0;
   top: 0;
 }

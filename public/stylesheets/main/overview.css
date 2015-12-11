@@ -1,0 +1,20 @@
+.customer_table {
+  border: 1px solid #ddd;
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
+.customer_table tr, .customer_table td {
+  border: 1px solid #ddd;
+  background: #FFFFFE;
+  overflow: auto;
+}
+
+.customer_table tr.alt td {
+  color:#000000;
+  background: #EBF4FF;
+}
+.customer_table tr td.first {
+  width: 40px;
+}

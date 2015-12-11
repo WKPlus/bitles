@@ -17,6 +17,8 @@ $('.slim-scroll').each(function () {
 app.controller('requestController', function ($scope, $rootScope,$interval) {
   $scope.openWindows = function(id){
     $rootScope.request_detail = id;
+    $(".request_cell").css("background-color", "");
+    $(".request_cell").eq(this.$index).css("background-color", "#EBF4FF");
   }
     $scope.requestList = [];
     $("#slim").bind("DOMSubtreeModified", function(){
