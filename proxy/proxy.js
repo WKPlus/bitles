@@ -1,10 +1,11 @@
 var Proxy = require('http-mitm-proxy'),
-    Iconv = require('iconv').Iconv,
+//    Iconv = require('iconv').Iconv,
     zlib = require('zlib'),
     charset = require('charset'),
     _ = require('underscore');
   
-var htmlDrawer = require("./proxy/htmlDrawer.js");
+var htmlDrawer = require("./htmlDrawer.js");
+var requestInfo = require("../common/requestInfo.js");
 
 var ignore_file_type = ['js', 'css', 'jpg', 'png', 'gif', 'jpeg'];
 var PORT = 5050;
@@ -36,6 +37,7 @@ var get_url = function(ctx) {
 };
 
 var is_image_file = function(headers) {
+  if(!headers['content']) return false;
   return headers['content-type'].indexOf('image') >= 0;
 };
 
@@ -76,7 +78,7 @@ var log_handler = function(ctx) {
   console.log(url);
   console.log(JSON.stringify(ctx.clientToProxyRequest.headers, null, '  '));
   //初始化一个requestInfo对象，传给htmlDrawer
-  var requestInfo = {
+  var initRequest = {
     url: url,
     req_header: ctx.clientToProxyRequest.headers,
     req_body: "",
@@ -84,18 +86,20 @@ var log_handler = function(ctx) {
     res_body: "",
     err_msg: ""
   };
+  var requestInfoInstance = new requestInfo(initRequest);
+
 
   var buffers = req_data_pool.get(url);
   req_data_pool.delete(url);
   if (buffers) {
     var req_body = concate_buffers(buffers).toString('UTF8');
     console.log(req_body)
-    requestInfo.req_body = req_body;
+    requestInfoInstance.req_body = req_body;
   }
 
   console.log(Array(81).join("-"));
   console.log(JSON.stringify(ctx.serverToProxyResponse.headers, null, '  '));
-  requestInfo.res_header = ctx.serverToProxyResponse.headers; 
+  requestInfoInstance.res_header = ctx.serverToProxyResponse.headers; 
 
   // if response body is empty or response is image file, skip logging content
   var buffers = res_data_pool.get(url);
@@ -111,19 +115,19 @@ var log_handler = function(ctx) {
       zlib.unzip(buffer, function(err, buffer) {
         if (!err) {
           console.log(decode_content(buffer, cs));
-          requestInfo.res_body = decode_content(buffer, cs);
+          requestInfoInstance.res_body = decode_content(buffer, cs);
         }else {
           console.error("unzip error:", err);
-          requestInfo.err_msg = err;
+          requestInfoInstance.err_msg = err;
         }
       });
     }else {
       console.log(decode_content(buffer, cs));
-      requestInfo.res_body = decode_content(buffer, cs);
+      requestInfoInstance.res_body = decode_content(buffer, cs);
     }
   }
   console.log("push url into requestList");
-  htmlDrawer.appendRequestList(requestInfo);
+  htmlDrawer.appendRequestList(requestInfoInstance);
 };
 
 var log_wrapper = function(ctx, callback) {

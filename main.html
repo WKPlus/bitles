@@ -4,28 +4,34 @@
     <title>Bitles</title>
     <link href="public/stylesheets/main/index.css" rel="stylesheet">
     <link href="public/stylesheets/main/request.css" rel="stylesheet">
+    <script src="public/js/vendor/angular.min.1.3.8.js"></script>
   </head>
 
   <body ng-app="main"  ng-controller="mainController">
       <div class="buttons-group">
         <h5>This is Bitles</h5>
-        <button id="add-tray" ng-click="openWindows()">Add Tray Icon</button>
-        <button id="remove-tray">Remove Tray Icon</button>
       </div>
       <div id="request_info" ng-controller="requestController">
-        <div class="slim-scroll">
+        <div class="slim-scroll" id="slim">
           <div ng-repeat="request in requestList" class="request_cell" ng-click="openWindows(request)">
-            <div class="name">{{request.name}}</div>
+            <div class="host">{{request.host}}</div>
+            <div class="path">{{request.path}}</div>
             <div class="time">{{request.time}}</div>
           </div>
         </div>
       </div>
+
       <div id="request_detail" ng-controller="detailController">
-        {{$root.request_detail}}
+        <div id="centeredmenu">
+           <ul>
+             <li><a href="#" class="active" id="req_tab">request</a></li>
+             <li><a href="#" id="res_tab">response</a></li>
+           </ul>
+        </div>
+          <div ng-include="tab"></div>
       </div>
 
-<script src="public/js/vendor/jquery.min.js"></script>
-<script src="public/js/vendor/angular.min.1.3.8.js"></script>
+<script src="public/ace/assets/js/jquery-2.0.3.min.js"></script>
 <script src="public/ace/assets/js/jquery.slimscroll.min.js"></script>
 
 <!-- app -->

@@ -1,16 +1,58 @@
-.request_cell {
-  height: 40px;
-  border: 1px solid #DDD;
+.request_detail { 
+  padding: 5px;
+  overflow: scroll;
 }
 
-.request_cell .name {
-  float: left;
-  margin-left: 20px;
-  margin-top: 12px
+.response_detail textarea { 
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 99%;
+}
+
+.response_detail { 
+  padding: 5px;
+  overflow: scroll;
+}
+
+.response_detail .body {
+  height: 520px;
+}
+
+.request_detail .header {
+  height: 140px;
+}
+
+.request_detail textarea {
+  width: 99%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.request_detail .body {
+  height: 280px;
+}
+.request_cell {
+  height: 40px;
+  overflow: hidden;
+  border: 1px solid #DDD;
+  position: relative;
+}
+
+.request_cell .host {
+  position: absolute;
+  top: 0;
+  left: 20px;
+}
+
+.request_cell .path {
+  position: absolute;
+  bottom: 0;
+  left: 20px;
 }
 
 .request_cell .time {
-  float: right;
+  position: absolute;
   margin-right: 20px;
-  margin-top: 12px
+  right: 0;
+  top: 0;
 }
